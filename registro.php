@@ -8,6 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contrasena_confirm = ($_POST['contrasena_confirm']);
     $rol = ($_POST['rol']);
     $direccion = ($_POST['direccion']);
+    
+
 
     //Validar datos
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
@@ -21,6 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['rol'] = $rol;
         $_SESSION['correo'] = $correo;
         $_SESSION['direccion'] = $direccion;
+        // Redirigir si todo está correcto
+        header("Location: panel.php");
+        exit;
 
         $mensaje = "<div class='alert alert-success'>¡Registro exitoso para <strong>$nombre</strong> como <strong>$rol</strong>!</div>";
     }

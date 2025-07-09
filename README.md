@@ -16,6 +16,18 @@ Actualmente cuenta con una interfaz básica de registro de usuarios (Productores
 - Interfaz limpia y responsiva gracias a Bootstrap.
 - Sesión PHP para almacenar los datos (temporal).
 
+## Actualización
+- Panel principal según el rol
+- Productor: acceso a publicación de productos y pedidos
+- Consumidor: acceso al catálogo y pedidos (en desarrollo)
+- Publicación de productos (solo para productores):
+- Formulario para agregar productos con:
+- Nombre
+- Categoría (Frutas, Vegetales, Granos)
+- Precio
+- Cantidad disponible
+- Fecha estimada de cosecha
+
 ## 🔧 Requisitos
 
 - [XAMPP](https://www.apachefriends.org/) o servidor con:
