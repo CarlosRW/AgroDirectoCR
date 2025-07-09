@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if (!empty($mensaje)) echo $mensaje; ?>
 
-        <form method="post">
+        <form id="registro" method="post">
             <div class="mb-3">
                 <label class="form-label" for="nombre">Nombre completo:</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -51,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="mb-3">
                 <label class="form-label" for="correo">Correo electrónico:</label>
-                <input type="correo" class="form-control" id="correo" name="correo" required>
+                <input type="email" class="form-control" id="correo" name="correo" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="contraseña">Contraseña:</label>
-                <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+                <label class="form-label" for="contrasena">Contraseña:</label>
+                <input type="password" class="form-control" id="contrasena" name="contrasena" required>
             </div>
 
             <div class="mb-3">
