@@ -21,9 +21,16 @@ if (!isset($_SESSION['nombre']) || $_SESSION['rol'] !== 'Consumidor') {
             <div class="card-body text-center">
                 <h3>¡Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?>!</h3>
                 <p>Rol: <strong><?php echo $_SESSION['rol']; ?></strong></p>
-                <a href="catalogo.php" class="btn btn-info me-2">🔍 Ver Catálogo</a>
-                <a href="mis_pedidos.php" class="btn btn-warning me-2">📦 Mis Pedidos</a>
-                <a href="logout.php" class="btn btn-danger">🚪 Cerrar Sesión</a>
+                <a href="catalogo.php" class="btn btn-info">
+    <i class="bi bi-box-seam"></i> Ver Catálogo
+</a>
+<a href="mis_pedidos.php" class="btn btn-warning text-white">
+    <i class="bi bi-receipt"></i> Mis Pedidos
+</a>
+<a href="logout.php" class="btn btn-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+</a>
+
             </div>
         </div>
     </div>
