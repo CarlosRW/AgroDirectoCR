@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Consumidor') {
+    header("Location: index.php");
+    exit;
+}
 
 // Productos simulados 
 $productos = [
