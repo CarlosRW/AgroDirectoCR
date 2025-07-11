@@ -141,11 +141,6 @@ $productos_filtrados = $productos;
                 </div>
             <?php endif; ?>
         </div>
-    </div>
-</section>
-
-<?php include 'footer.php'; // el footer  ?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </div></section>
 </body>
-</html>
+</html
