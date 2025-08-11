@@ -1,66 +1,166 @@
+<?php
+session_start();
+
+// Verificar que el usuario esté autenticado
+if (!isset($_SESSION['nombre'])) {
+    header("Location: login.php");
+    exit;
+}
+
+require 'conexion.php';
+
+// Obtener información completa del usuario desde la base de datos
+$user_id = $_SESSION['user_id'];
+$usuario = null;
+$mensaje = "";
+
+try {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$usuario) {
+        session_destroy();
+        header("Location: login.php");
+        exit;
+    }
+} catch (PDOException $e) {
+    $mensaje = "<div class='alert alert-danger'>Error al cargar perfil</div>";
+}
+
+// Procesar actualización de perfil
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
+    $nombre = trim($_POST['nombre']);
+    $direccion = trim($_POST['direccion']);
+    
+    if (!empty($nombre)) {
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET nombre = ?, direccion = ? WHERE id = ?");
+            $stmt->execute([$nombre, $direccion, $user_id]);
+            
+            // Actualizar sesión
+            $_SESSION['nombre'] = $nombre;
+            $_SESSION['direccion'] = $direccion;
+            
+            // Actualizar datos locales
+            $usuario['nombre'] = $nombre;
+            $usuario['direccion'] = $direccion;
+            
+            $mensaje = "<div class='alert alert-success'>Perfil actualizado correctamente</div>";
+        } catch (PDOException $e) {
+            $mensaje = "<div class='alert alert-danger'>Error al actualizar perfil</div>";
+        }
+    } else {
+        $mensaje = "<div class='alert alert-danger'>El nombre es obligatorio</div>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Perfil - AgroDirectoCR</title>
+  <title>Mi Perfil - AgroDirectoCR</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      padding-top: 80px;
-    }
-    .card {
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-  </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
-  <div class="container">
-    <a class="navbar-brand" href="index.php">AgroDirectoCR</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link active" href="perfil.php">Perfil</a></li>
-        <li class="nav-item"><a class="nav-link" href="registro.php">Login / Registro</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<?php include 'navbar.php'; ?>
 
-<!-- Perfil del Usuario -->
-<div class="container">
+<div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card mt-5 p-4">
-        <h3 class="text-center mb-4">👤 Mi Perfil</h3>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item"><strong>Nombre:</strong> Keilyn Zamora</li>
-          <li class="list-group-item"><strong>Correo:</strong> keilyn@ejemplo.com</li>
-          <li class="list-group-item"><strong>Rol:</strong> Productora</li>
-          <li class="list-group-item"><strong>Fecha de Registro:</strong> 13 de julio, 2025</li>
-        </ul>
-        <div class="text-center mt-4">
-          <a href="#" class="btn btn-primary">Editar Perfil</a>
-          <a href="#" class="btn btn-secondary">Cerrar Sesion</a>
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>Mi Perfil</h3>
+        </div>
+        <div class="card-body">
+          
+          <?php echo $mensaje; ?>
+          
+          <?php if ($usuario): ?>
+            <div class="row">
+              <!-- Información del perfil -->
+              <div class="col-md-6">
+                <h5>Información Personal</h5>
+                <div class="mb-3">
+                  <strong>Nombre:</strong> <?php echo htmlspecialchars($usuario['nombre']); ?>
+                </div>
+                <div class="mb-3">
+                  <strong>Correo:</strong> <?php echo htmlspecialchars($usuario['correo']); ?>
+                </div>
+                <div class="mb-3">
+                  <strong>Rol:</strong> 
+                  <span class="badge <?php echo ($usuario['rol'] === 'Productor') ? 'bg-primary' : 'bg-success'; ?>">
+                    <?php echo htmlspecialchars($usuario['rol']); ?>
+                  </span>
+                </div>
+                <div class="mb-3">
+                  <strong>Dirección:</strong> 
+                  <?php echo !empty($usuario['direccion']) ? htmlspecialchars($usuario['direccion']) : '<em class="text-muted">No especificada</em>'; ?>
+                </div>
+                <div class="mb-3">
+                  <strong>Miembro desde:</strong> 
+                  <?php echo date('d/m/Y', strtotime($usuario['created_at'])); ?>
+                </div>
+              </div>
+              
+              <!-- Formulario de edición -->
+              <div class="col-md-6">
+                <h5>Editar Información</h5>
+                <form method="post">
+                  <div class="mb-3">
+                    <label class="form-label">Nombre completo:</label>
+                    <input type="text" class="form-control" name="nombre" 
+                           value="<?php echo htmlspecialchars($usuario['nombre']); ?>" required>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Dirección:</label>
+                    <textarea class="form-control" name="direccion" rows="3" 
+                              placeholder="Provincia, cantón, distrito..."><?php echo htmlspecialchars($usuario['direccion'] ?? ''); ?></textarea>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Correo electrónico:</label>
+                    <input type="email" class="form-control" 
+                           value="<?php echo htmlspecialchars($usuario['correo']); ?>" disabled>
+                    <div class="form-text">El correo no se puede cambiar</div>
+                  </div>
+                  
+                  <button type="submit" name="actualizar" class="btn btn-primary">
+                    Actualizar Perfil
+                  </button>
+                </form>
+              </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <!-- Acciones adicionales -->
+            <div class="row">
+              <div class="col-12">
+                <h5>Acciones</h5>
+                <div class="d-flex gap-2 flex-wrap">
+                  <a href="panel.php" class="btn btn-success">Ir al Panel</a>
+                  
+                  <?php if ($usuario['rol'] === 'Productor'): ?>
+                    <a href="mis_productos.php" class="btn btn-info">Mis Productos</a>
+                  <?php else: ?>
+                    <a href="catalogo.php" class="btn btn-info">Ver Catálogo</a>
+                    <a href="carrito.php" class="btn btn-warning">Mi Carrito</a>
+                  <?php endif; ?>
+                  
+                  <a href="logout.php" class="btn btn-danger">Cerrar Sesión</a>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-3 mt-5">
-  <div class="container">
-    <p>&copy; <?php echo date('Y'); ?> AgroDirectoCR. Todos los derechos reservados.</p>
-  </div>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

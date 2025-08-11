@@ -18,7 +18,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Productor') {
 <div class="container mt-5">
     <div class="card shadow">
         <div class="card-body">
-            <h3 class="card-title mb-4">📦 Publicar Nuevo Producto</h3>
+            <h3 class="card-title mb-4"> Publicar Nuevo Producto</h3>
 
             <form method="post" action="guardar_producto.php">
                 <div class="mb-3">
@@ -51,8 +51,8 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Productor') {
                     <input type="date" name="fecha_cosecha" class="form-control">
                 </div>
 
-                <button type="submit" class="btn btn-success">✅ Publicar</button>
-                <a href="panel.php" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-success">Publicar</button>
+                <a href="panel.php" class="btn btn-secondary">Volver</a>
             </form>
         </div>
     </div>
