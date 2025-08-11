@@ -1,61 +1,104 @@
 <?php
 session_start();
 
-// Eliminar producto del carrito
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['remove_item'])) {
-    $product_id = $_POST['remove_item'];
-    if (isset($_SESSION['carrito'][$product_id])) {
-        unset($_SESSION['carrito'][$product_id]);
+if (!isset($_SESSION['carrito'])) {
+    $_SESSION['carrito'] = [];
+}
+
+// Agregar producto
+if (isset($_POST['agregar'])) {
+    $id = $_POST['id'];
+    $nombre = $_POST['nombre'];
+    $precio = $_POST['precio'];
+    $cantidad = $_POST['cantidad'];
+
+    $encontrado = false;
+    foreach ($_SESSION['carrito'] as &$item) {
+        if ($item['id'] == $id) {
+            $item['cantidad'] += $cantidad;
+            $encontrado = true;
+            break;
+        }
     }
+    if (!$encontrado) {
+        $_SESSION['carrito'][] = [
+            'id' => $id,
+            'nombre' => $nombre,
+            'precio' => $precio,
+            'cantidad' => $cantidad
+        ];
+    }
+    header("Location: carrito.php");
+    exit;
+}
+
+// Eliminar producto
+if (isset($_GET['eliminar'])) {
+    $id = $_GET['eliminar'];
+    $_SESSION['carrito'] = array_filter($_SESSION['carrito'], function ($item) use ($id) {
+        return $item['id'] != $id;
+    });
+}
+
+// Vaciar carrito
+if (isset($_GET['vaciar'])) {
+    $_SESSION['carrito'] = [];
 }
 ?>
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Carrito de Compras</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
 <?php include 'navbar.php'; ?>
 
-<div class="container mt-5">
-    <h2>🛒 Carrito de Compras</h2>
-
+<div class="container py-5">
+    <h2 class="mb-4">Carrito de Compras</h2>
     <?php if (empty($_SESSION['carrito'])): ?>
-        <p class="alert alert-info mt-4">Tu carrito está vacío.</p>
+        <div class="alert alert-info">Tu carrito está vacío.</div>
     <?php else: ?>
-        <table class="table table-bordered mt-4">
-            <thead class="table-success">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <th>Imagen</th>
                     <th>Producto</th>
                     <th>Precio</th>
                     <th>Cantidad</th>
-                    <th>Total</th>
-                    <th>Eliminar</th>
+                    <th>Subtotal</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $total_carrito = 0;
-                foreach ($_SESSION['carrito'] as $producto):
-                    $subtotal = $producto['precio'] * $producto['cantidad'];
-                    $total_carrito += $subtotal;
-                ?>
-                <tr>
-                    <td><img src="<?php echo $producto['imagen']; ?>" width="60" height="60" style="object-fit:cover;"></td>
-                    <td><?php echo $producto['nombre']; ?></td>
-                    <td>₡<?php echo number_format($producto['precio'], 2); ?></td>
-                    <td><?php echo $producto['cantidad']; ?></td>
-                    <td>₡<?php echo number_format($subtotal, 2); ?></td>
-                    <td>
-                        <form method="post" action="carrito.php">
-                            <button type="submit" name="remove_item" value="<?php echo $producto['id']; ?>" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
+                <?php $total = 0; ?>
+                <?php foreach ($_SESSION['carrito'] as $item): ?>
+                    <?php $subtotal = $item['precio'] * $item['cantidad']; ?>
+                    <?php $total += $subtotal; ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($item['nombre']); ?></td>
+                        <td>₡<?php echo number_format($item['precio'], 2); ?></td>
+                        <td><?php echo $item['cantidad']; ?></td>
+                        <td>₡<?php echo number_format($subtotal, 2); ?></td>
+                        <td>
+                            <a href="carrito.php?eliminar=<?php echo $item['id']; ?>" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
+                <tr>
+                    <th colspan="3" class="text-end">Total:</th>
+                    <th>₡<?php echo number_format($total, 2); ?></th>
+                    <th></th>
+                </tr>
             </tbody>
         </table>
-
-        <div class="text-end">
-            <h4>Total: ₡<?php echo number_format($total_carrito, 2); ?></h4>
+        <div class="d-flex justify-content-between">
+            <a href="carrito.php?vaciar=1" class="btn btn-outline-danger">Vaciar Carrito</a>
+            <a href="checkout.php" class="btn btn-success">Finalizar Compra</a>
         </div>
     <?php endif; ?>
 </div>
 
 <?php include 'footer.php'; ?>
+</body>
+</html>
