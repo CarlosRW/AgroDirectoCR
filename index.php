@@ -41,7 +41,10 @@ section {
           <a class="nav-link" href="#sobre">Sobre Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#productos">Productos</a>
+          <a class="nav-link" href="#productos">Destacados</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="catalogo.php">Productos</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="registro.php">Login / Registro</a>
@@ -99,7 +102,7 @@ section {
   </div>
 </section>
 
-<!-- Productos -->
+<!-- Productos Destacados -->
 <section id="productos" class="bg-light text-center">
   <div class="container">
     <h2 class="mb-4">Productos Destacados</h2>
