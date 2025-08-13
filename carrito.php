@@ -71,6 +71,12 @@ if (isset($_GET['vaciar'])) {
 <meta charset="UTF-8">
 <title>Carrito de Compras</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script>
+function finalizarCompra() {
+    alert("✅ Su compra ha sido exitosa. ¡Gracias por su compra!");
+    window.location.href = "carrito.php?vaciar=1"; // Vacía el carrito y recarga la página
+}
+</script>
 </head>
 <body>
 <?php include 'navbar.php'; ?>
@@ -130,13 +136,10 @@ if (isset($_GET['vaciar'])) {
             <a href="catalogo.php" class="btn btn-outline-primary">⬅ Seguir Comprando</a>
             <div>
                 <a href="carrito.php?vaciar=1" class="btn btn-outline-danger">Vaciar Carrito</a>
-                <a href="checkout.php" class="btn btn-success">Finalizar Compra</a>
+                <button onclick="finalizarCompra()" class="btn btn-success">Finalizar Compra</button>
             </div>
         </div>
     <?php endif; ?>
 </div>
-
-<?php include 'footer.php'; ?>
 </body>
 </html>
-
