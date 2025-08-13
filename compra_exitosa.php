@@ -79,6 +79,5 @@ if (isset($_GET['order_id'])) {
         </div>
     <?php endif; ?>
 </div>
-<?php include 'footer.php'; ?>
 </body>
 </html>
