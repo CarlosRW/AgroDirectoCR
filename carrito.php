@@ -251,7 +251,5 @@ if (isset($_POST['finalizar'])) {
         </div>
     <?php endif; ?>
 </div>
-
-<?php include 'footer.php'; ?>
 </body>
 </html>

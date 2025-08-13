@@ -1,5 +1,29 @@
 <?php
 session_start();
+
+// Función para manejar redirección al catálogo
+function redirigir_catalogo() {
+    if (!isset($_SESSION['nombre'])) {
+        // Usuario no logueado - mostrar mensaje
+        $_SESSION['mensaje_catalogo'] = "Debe iniciar sesión primero para ver el catálogo de productos.";
+        header("Location: login.php");
+        exit;
+    } elseif ($_SESSION['rol'] !== 'Consumidor') {
+        // Usuario logueado pero no es consumidor
+        $_SESSION['mensaje_catalogo'] = "Solo los consumidores pueden acceder al catálogo.";
+        header("Location: panel.php");
+        exit;
+    } else {
+        // Usuario válido - ir al catálogo
+        header("Location: catalogo.php");
+        exit;
+    }
+}
+
+// Procesar clicks en productos destacados
+if (isset($_GET['ver_catalogo'])) {
+    redirigir_catalogo();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -44,7 +68,11 @@ section {
           <a class="nav-link" href="#productos">Destacados</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="catalogo.php">Productos</a>
+          <?php if (isset($_SESSION['nombre']) && $_SESSION['rol'] === 'Consumidor'): ?>
+            <a class="nav-link" href="catalogo.php">Productos</a>
+          <?php else: ?>
+            <a class="nav-link" href="?ver_catalogo=1">Productos</a>
+          <?php endif; ?>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="registro.php">Login / Registro</a>
@@ -113,7 +141,11 @@ section {
           <div class="card-body">
             <h5 class="card-title">Frutas de Temporada</h5>
             <p class="card-text">Las mejores frutas frescas directamente desde la finca a tu mesa.</p>
-            <button class="btn btn-success btn-sm">Comprar</button>
+            <?php if (isset($_SESSION['nombre']) && $_SESSION['rol'] === 'Consumidor'): ?>
+              <a href="catalogo.php?categoria_id=1" class="btn btn-success btn-sm">Comprar</a>
+            <?php else: ?>
+              <a href="?ver_catalogo=1" class="btn btn-success btn-sm">Comprar</a>
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -123,7 +155,11 @@ section {
           <div class="card-body">
             <h5 class="card-title">Vegetales Orgánicos</h5>
             <p class="card-text">Cultivados con técnicas sostenibles, saludables y sabrosos.</p>
-            <button class="btn btn-success btn-sm">Comprar</button>
+            <?php if (isset($_SESSION['nombre']) && $_SESSION['rol'] === 'Consumidor'): ?>
+              <a href="catalogo.php?categoria_id=2" class="btn btn-success btn-sm">Comprar</a>
+            <?php else: ?>
+              <a href="?ver_catalogo=1" class="btn btn-success btn-sm">Comprar</a>
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -133,7 +169,11 @@ section {
           <div class="card-body">
             <h5 class="card-title">Granos Básicos</h5>
             <p class="card-text">Alimentos esenciales de alta calidad producidos localmente.</p>
-            <button class="btn btn-success btn-sm">Comprar</button>
+            <?php if (isset($_SESSION['nombre']) && $_SESSION['rol'] === 'Consumidor'): ?>
+              <a href="catalogo.php?categoria_id=3" class="btn btn-success btn-sm">Comprar</a>
+            <?php else: ?>
+              <a href="?ver_catalogo=1" class="btn btn-success btn-sm">Comprar</a>
+            <?php endif; ?>
           </div>
         </div>
       </div>

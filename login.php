@@ -57,7 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card p-4 shadow w-100" style="max-width: 400px">
         <h3 class="card-title text-center mb-4">Iniciar Sesión</h3>
         
+        <!-- Muestra cuando alguien intenta acceder al catálogo sin estar logueado. -->
         <?php if (!empty($mensaje)) echo $mensaje; ?>
+        
+        <?php if (isset($_SESSION['mensaje_catalogo'])): ?>
+            <div class="alert alert-info">
+                <?php echo htmlspecialchars($_SESSION['mensaje_catalogo']); ?>
+                <?php unset($_SESSION['mensaje_catalogo']); ?>
+            </div>
+        <?php endif; ?>
         
         <form method="post">
             <div class="mb-3">
